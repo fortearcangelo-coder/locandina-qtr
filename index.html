@@ -400,7 +400,17 @@ function setModalita(val) {
 }
 
 // ── MUTUA ESCLUSIONE DATE ────────────────────────────────────────────────────
+function formatDataInput(el) {
+  var v = el.value.replace(/\D/g, '');
+  if (v.length > 8) v = v.slice(0, 8);
+  if (v.length <= 2)      el.value = v;
+  else if (v.length <= 4) el.value = v.slice(0,2) + '/' + v.slice(2);
+  else                    el.value = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+}
+
 function onDataInput() {
+  formatDataInput(document.getElementById('dataInizio'));
+  formatDataInput(document.getElementById('dataFine'));
   var inizio = document.getElementById('dataInizio').value.trim();
   var fine   = document.getElementById('dataFine').value.trim();
   var libera = document.getElementById('dataLibera');
