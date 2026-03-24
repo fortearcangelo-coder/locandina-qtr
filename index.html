@@ -308,11 +308,11 @@
 
       <div class="field">
         <label for="dataInizio">Data inizio <span style="opacity:.5;font-weight:400">(gg/mm/aaaa)</span></label>
-        <input type="text" id="dataInizio" placeholder="es. 12/04/2025" maxlength="10" oninput="onDataInput()" inputmode="numeric">
+        <input type="text" id="dataInizio" placeholder="es. 12/04/2025" maxlength="10" oninput="onDataInput(this)" inputmode="numeric">
       </div>
       <div class="field">
         <label for="dataFine">Data fine <span style="opacity:.5;font-weight:400">(opz. — gg/mm/aaaa)</span></label>
-        <input type="text" id="dataFine" placeholder="es. 14/04/2025" maxlength="10" oninput="onDataInput()" inputmode="numeric">
+        <input type="text" id="dataFine" placeholder="es. 14/04/2025" maxlength="10" oninput="onDataInput(this)" inputmode="numeric">
       </div>
 
       <div class="or"><span>oppure scrivi tu</span></div>
@@ -401,16 +401,22 @@ function setModalita(val) {
 
 // ── MUTUA ESCLUSIONE DATE ────────────────────────────────────────────────────
 function formatDataInput(el) {
+  var cursorPos = el.selectionStart;
+  var oldLen = el.value.length;
   var v = el.value.replace(/\D/g, '');
   if (v.length > 8) v = v.slice(0, 8);
-  if (v.length <= 2)      el.value = v;
-  else if (v.length <= 4) el.value = v.slice(0,2) + '/' + v.slice(2);
-  else                    el.value = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+  var out;
+  if (v.length <= 2)      out = v;
+  else if (v.length <= 4) out = v.slice(0,2) + '/' + v.slice(2);
+  else                    out = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+  el.value = out;
+  // aggiusta cursore per le barre inserite automaticamente
+  var diff = out.length - oldLen;
+  try { el.setSelectionRange(cursorPos + diff, cursorPos + diff); } catch(e) {}
 }
 
-function onDataInput() {
-  formatDataInput(document.getElementById('dataInizio'));
-  formatDataInput(document.getElementById('dataFine'));
+function onDataInput(el) {
+  formatDataInput(el);
   var inizio = document.getElementById('dataInizio').value.trim();
   var fine   = document.getElementById('dataFine').value.trim();
   var libera = document.getElementById('dataLibera');
